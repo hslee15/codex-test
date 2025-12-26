@@ -1,9 +1,8 @@
-import { Link } from "react-router-dom";
-import { rooms } from "../data.js";
+import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { rooms as fallbackRooms } from "../data.js";
 
-const room = rooms[0];
-
-const gallery = [
+const fallbackGallery = [
   {
     label: "바다 전망 테라스",
     src: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
@@ -30,6 +29,80 @@ const policies = [
 ];
 
 export default function DetailPage() {
+  const { id } = useParams();
+  const [room, setRoom] = useState(fallbackRooms[0]);
+  const [loading, setLoading] = useState(true);
+  const [bookingStatus, setBookingStatus] = useState("");
+  const [form, setForm] = useState({
+    checkIn: "",
+    checkOut: "",
+    guests: 2,
+    name: "",
+    email: "",
+  });
+
+  useEffect(() => {
+    let active = true;
+    fetch(`/api/rooms/${id}`)
+      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
+      .then((data) => {
+        if (active && data) {
+          setRoom(data);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (active) {
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  const gallery = room.gallery?.length
+    ? room.gallery.map((src, index) => ({
+        src,
+        label: fallbackGallery[index % fallbackGallery.length].label,
+      }))
+    : fallbackGallery;
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleBooking = async (event) => {
+    event.preventDefault();
+    setBookingStatus("예약을 진행 중입니다...");
+    try {
+      const token = localStorage.getItem("authToken");
+      const res = await fetch("/api/bookings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          roomId: room.id,
+          checkIn: form.checkIn,
+          checkOut: form.checkOut,
+          guests: Number(form.guests),
+          name: form.name,
+          email: form.email,
+        }),
+      });
+      if (!res.ok) {
+        throw new Error("booking failed");
+      }
+      setBookingStatus("예약이 완료되었습니다. 이메일을 확인해 주세요.");
+    } catch (error) {
+      setBookingStatus("예약에 실패했습니다. 입력 정보를 확인해 주세요.");
+    }
+  };
+
   return (
     <section className="detail-page">
       <div className="detail-header">
@@ -49,6 +122,7 @@ export default function DetailPage() {
 
       <div className="detail-layout">
         <div className="detail-gallery">
+          {loading && <div className="panel">객실 정보를 불러오는 중입니다.</div>}
           <div className="detail-main">
             <img src={gallery[0].src} alt={gallery[0].label} />
           </div>
@@ -74,7 +148,36 @@ export default function DetailPage() {
               </span>
             ))}
           </div>
-          <button className="primary">이 객실 예약하기</button>
+          <form className="detail-form" onSubmit={handleBooking}>
+            <div className="field">
+              <label>체크인</label>
+              <input name="checkIn" type="date" onChange={handleChange} />
+            </div>
+            <div className="field">
+              <label>체크아웃</label>
+              <input name="checkOut" type="date" onChange={handleChange} />
+            </div>
+            <div className="field">
+              <label>투숙 인원</label>
+              <select name="guests" onChange={handleChange} value={form.guests}>
+                <option value={1}>성인 1명</option>
+                <option value={2}>성인 2명</option>
+                <option value={3}>성인 3명</option>
+              </select>
+            </div>
+            <div className="field">
+              <label>예약자 이름</label>
+              <input name="name" type="text" onChange={handleChange} />
+            </div>
+            <div className="field">
+              <label>이메일</label>
+              <input name="email" type="email" onChange={handleChange} />
+            </div>
+            <button className="primary" type="submit">
+              이 객실 예약하기
+            </button>
+            {bookingStatus && <div className="detail-status">{bookingStatus}</div>}
+          </form>
           <div className="detail-meta">
             <div>
               <strong>객실 구성</strong>

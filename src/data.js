@@ -1,5 +1,6 @@
 export const rooms = [
   {
+    id: 1,
     name: "Harbor Queen",
     size: "28m²",
     bed: "킹 침대",
@@ -14,8 +15,15 @@ export const rooms = [
     highlights: ["오션뷰", "킹 침대", "발코니", "무료 취소"],
     image:
       "https://images.unsplash.com/photo-1501117716987-c8e1ecb210d1?auto=format&fit=crop&w=800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=900&q=80",
+    ],
   },
   {
+    id: 2,
     name: "City Double",
     size: "32m²",
     bed: "더블 2개",
@@ -29,8 +37,15 @@ export const rooms = [
     highlights: ["시티뷰", "더블 2개", "워크데스크", "현장 결제"],
     image:
       "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1505691723518-36a5ac3be353?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1507089947368-19c1da9775ae?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1501045661006-fcebe0257c3f?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80",
+    ],
   },
   {
+    id: 3,
     name: "Loft Suite",
     size: "45m²",
     bed: "스위트",
@@ -44,6 +59,12 @@ export const rooms = [
     highlights: ["오션뷰", "거실", "미니키친", "레이트 체크아웃"],
     image:
       "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1501045661006-fcebe0257c3f?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1507652313519-d4e9174996dd?auto=format&fit=crop&w=900&q=80",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=900&q=80",
+    ],
   },
 ];
 

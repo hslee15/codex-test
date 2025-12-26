@@ -1,6 +1,27 @@
-import { filters, rooms } from "../data.js";
+import { useEffect, useState } from "react";
+import { filters, rooms as fallbackRooms } from "../data.js";
 
 export default function SearchPage() {
+  const [rooms, setRooms] = useState(fallbackRooms);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/rooms")
+      .then((res) => (res.ok ? res.json() : Promise.reject(res)))
+      .then((data) => {
+        if (active && Array.isArray(data)) {
+          setRooms(data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const heroRoom = rooms[0] || fallbackRooms[0];
+
   return (
     <>
       <section className="hero-splash">
@@ -18,13 +39,13 @@ export default function SearchPage() {
           </div>
         </div>
         <div className="hero-media">
-          <img src={rooms[0].image} alt="하버스테이 호텔 대표 객실" />
+          <img src={heroRoom.image} alt="하버스테이 호텔 대표 객실" />
           <div className="hero-overlay">
             <div>
-              <strong>Harbor Queen</strong>
-              <span>오션뷰 · 킹 침대 · 발코니</span>
+              <strong>{heroRoom.name}</strong>
+              <span>{heroRoom.perks}</span>
             </div>
-            <div className="hero-price">₩148,000 / 1박</div>
+            <div className="hero-price">{heroRoom.price} / 1박</div>
           </div>
         </div>
       </section>
